@@ -401,8 +401,12 @@ string JSElementName(const FieldDescriptor *desc) {
   return ToUpperCamel(ParseLowerUnderscore(desc->name()));
 }
 
+string RawJSElementName(const FieldDescriptor *desc) {
+  return desc->name();
+}
+
 string JSFieldName(const FieldDescriptor *desc) {
-  string js_field_name = JSElementName(desc);
+  string js_field_name = RawJSElementName(desc);
   if (desc->is_map()) {
     js_field_name += "Map";
   } else if (desc->is_repeated()) {
@@ -840,10 +844,10 @@ void PrintProtoDtsMessage(Printer *printer, const Descriptor *desc,
     if (field->type() != FieldDescriptor::TYPE_MESSAGE ||
         field->is_repeated()) {
       printer->Print(vars,
-                     "get$js_field_name$(): $js_field_type$;\n");
+                     "$js_field_name$: $js_field_type$;\n");
     } else {
       printer->Print(vars,
-                     "get$js_field_name$(): $js_field_type$ | undefined;\n");
+                     "$js_field_name$: $js_field_type$ | undefined;\n");
     }
     if (field->type() == FieldDescriptor::TYPE_BYTES && !field->is_repeated()) {
       printer->Print(vars,
@@ -852,11 +856,11 @@ void PrintProtoDtsMessage(Printer *printer, const Descriptor *desc,
     }
     if (!field->is_map() && (field->type() != FieldDescriptor::TYPE_MESSAGE ||
                              field->is_repeated())) {
-      printer->Print(vars,
-                     "set$js_field_name$(value: $js_field_type$): void;\n");
+//      printer->Print(vars,
+//                     "set$js_field_name$(value: $js_field_type$): void;\n");
     } else if (!field->is_map()) {
-      printer->Print(vars,
-                     "set$js_field_name$(value?: $js_field_type$): void;\n");
+//      printer->Print(vars,
+//                     "set$js_field_name$(value?: $js_field_type$): void;\n");
     }
     if (field->type() == FieldDescriptor::TYPE_MESSAGE && !field->is_repeated()
         && !field->is_map()) {
@@ -883,7 +887,7 @@ void PrintProtoDtsMessage(Printer *printer, const Descriptor *desc,
       printer->Print(vars, "has$js_field_name$(): boolean;\n");
     }
 
-    printer->Print("\n");
+//    printer->Print("\n");
   }
 
   for (int i = 0; i < desc->oneof_decl_count(); i++) {
